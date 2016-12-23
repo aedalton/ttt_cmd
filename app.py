@@ -34,12 +34,12 @@ def after_request(response):
         return response
 
 
-@app.route('/ttt', methods=['POST']) 
+@app.route('/ttt', methods=['POST'])
 def inbound():
         app.logger.debug("REQUEST =======")
-        
+
         if request.form.get('token') == Config.SLACK_WEBHOOK_SECRET:
-                
+
                 channel = request.form.get('channel_id')
                 username = request.form.get('user_name')
                 user_id = request.form.get('user_id')
@@ -69,7 +69,7 @@ def inbound():
                                 }
                         ]
                 }
-                
+
                 requests.post(res_url, json=res_text)
                 r = Response(mimetype='application/json')
                 r.data = res_text
