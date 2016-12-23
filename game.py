@@ -11,7 +11,7 @@ class GameInitError(Exception):
 class BoardError(Exception):
     """Invalid board state"""
 
-    
+
 def get_current_game(channel_id):
     """ Return the current (only) game set in channel
         channel_id: current channel
@@ -31,14 +31,14 @@ def get_current_board(channel_id):
     """
     try:
         return models.Board.select().where(models.Board.game == channel_id,
-                                    models.Board.is_active == True).get()
+                                           models.Board.is_active == True).get()
     except models.Board.DoesNotExist:
         raise BoardError("Board does not exist")
 
 
 def get_piece(board, user):
     """Retrieve marker for space in board
-       Args: 
+       Args:
          board: current board
          user: move maker
     """
@@ -55,22 +55,22 @@ def make_challenge(from_user, to_user, channel_id):
          channel_id: channel_id of command origin channel
     """
     if not api.check_user_in_channel(check_user=from_user, channel_id=channel_id, value='name') or not \
-       api.check_user_in_channel(check_user=to_user, channel_id=channel_id, value='name'):
+            api.check_user_in_channel(check_user=to_user, channel_id=channel_id, value='name'):
         raise GameInitError("cannot start game with user not in team")
-    
-    # check if there is an active board in this channel 
+
+    # check if there is an active board in this channel
     new_game = get_current_game(channel_id)
 
     if new_game.active:  # FUTURE IMPROVEMENTS: remove these redundant ops
         board = get_current_board(channel_id)
         option = "\nIts your turn. Please type a move (/ttt +number)" \
                  if from_user == board.next else " "
-        
+
         raise GameInitError("Cannot make a new game because there is an active game in this channel between <@%s> and <@%s>. %s" % (board.player1, board.player2, option))
 
     try:
         # no active game, make a new one
-        board = models.Board(game=new_game, is_active=True, player1=from_user, 
+        board = models.Board(game=new_game, is_active=True, player1=from_user,
                       player2=to_user, prev=from_user)
         board.save()
 
@@ -82,7 +82,7 @@ def make_challenge(from_user, to_user, channel_id):
 
 def check_for_win(board):
     """Return boolean value for winning set of moves in board
-    Args: 
+    Args:
        board: (Board object) the current board in play
     """
     wins = [['0', '1', '2'], ['3', '4', '5'], ['6', '7', '8'], # horizontal
@@ -100,7 +100,7 @@ def check_for_win(board):
                board.state[win[1]] == \
                board.state[win[2]]:
                 return (True, board.prev)  # return winner
-        
+
     return (False, board.next)  # game not over
 
 
@@ -118,21 +118,21 @@ def check_move(board, move, user):
             # potentially should perform user auth, but for the sake of
             # response time, simple auth against board participants
             raise BoardError("Sorry! You are not in this game. Game is between <@%s> and <@%s>" % (board.player1, board.player2))
-    
+
         if user == board.prev: # could have checked above
             raise BoardError("Turn error: Sorry! It is not your turn; it's %s's turn" % (str(board.next)))
-        
+
         elif board.state[str(move)] != Config.BLANK_CHAR:
             raise BoardError("Whoops! Board position %d not empty, please select new" % move)
 
         else:
             return True
-        
+
     raise BoardError("Move not between positions 1 and 9")  # RET??
 
 
 def make_move(board, from_user, channel_id, move):
-    """ Return game status, next user 
+    """ Return game status, next user
     Args:
       board: current Board object
       from_user: user who called command
