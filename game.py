@@ -42,9 +42,9 @@ def get_piece(board, user):
          board: current board
          user: move maker
     """
-    if user[0] == Config.TIE:
+    if user == Config.TIE:
         return Config.TIE_PIECE
-    return Config.P1_PIECE if user[0] == board.player1 else Config.P2_PIECE
+    return Config.P1_PIECE if user == board.player1 else Config.P2_PIECE
 
 
 def make_challenge(from_user, to_user, channel_id):

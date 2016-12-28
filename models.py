@@ -101,7 +101,7 @@ class Board(BaseModel):
                                        self.state['5'])
 
         bottom = utils.ascii_generator(self.state['6'],
-                                       self.state['8'],
+                                       self.state['7'],
                                        self.state['8'])
 
         return top + '\n' + middle + '\n' + bottom

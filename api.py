@@ -54,11 +54,11 @@ def get_command(user, text, channel_id):
                                              move=text, channel_id=channel_id)
 
             if game_over:
-                return "%s \n\n Winner: <@%s|%s> %s" %\
+                return "%s \n\n Winner: <@%s|%s>  %s" %\
                     (board.display(), user[0], user[1], game.get_piece(board, current_user))
 
-            return "%s \n\n Next move: <@%s|%s> %s" %\
-                (board.display(), user[0], user[1], game.get_piece(board, current_user))
+            return "%s \n\n\n\n Next move: %s  %s" %\
+                (board.display(), board.next, game.get_piece(board, current_user))
 
     raise CommandError("didn't find any keywords, please try again")
 
